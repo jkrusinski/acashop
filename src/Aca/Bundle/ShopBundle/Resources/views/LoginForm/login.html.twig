@@ -2,23 +2,16 @@
 
 {% block title %}Login{% endblock %}
 
-{% block body %}
+{% block content %}
 
     {% if loggedIn %}
 
-        <div class="container">
-
-            <p>Welcome {{ name }}</p>
-            <form action="/logout" method="post">
-                <input type="submit" value="Logout" class="btn btn-default"/>
-            </form>
-
-        </div>
+        <p>Welcome {{ name }}</p>
+        <form action="/logout" method="post">
+            <input type="submit" value="Logout" class="btn btn-default"/>
+        </form>
 
     {% else %}
-
-
-        <div class="container">
 
             <form action="/login" method="post">
 
@@ -41,7 +34,6 @@
             {% if msg %}
                 <div class="alert alert-danger" role="alert">{{ msg }}</div>
             {% endif %}
-        </div>
 
     {% endif %}
 
