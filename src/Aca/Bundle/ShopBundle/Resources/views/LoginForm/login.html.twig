@@ -1,0 +1,49 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+
+    {% if loggedIn %}
+
+        <div class="container">
+
+            <p>Welcome {{ name }}</p>
+            <form action="/logout" method="post">
+                <input type="submit" value="Logout" class="btn btn-default"/>
+            </form>
+
+        </div>
+
+    {% else %}
+
+
+        <div class="container">
+
+            <form action="/login" method="post">
+
+                <div class="form-group">
+                    <label for="login-user">Username:</label>
+                    <input type="text" name="username" value="{{ username }}" id="login-user" class="form-control"/>
+                </div>
+
+                <div class="form-group">
+                    <label for="login-password">Password:</label>
+                    <input type="password" name="password" value="{{ password }}" id="login-password"
+                           class="form-control"/>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Login" class="btn btn-default"/>
+                </div>
+            </form>
+
+            {% if msg %}
+                <div class="alert alert-danger" role="alert">{{ msg }}</div>
+            {% endif %}
+        </div>
+
+    {% endif %}
+
+{% endblock %}
+
