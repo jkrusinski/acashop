@@ -3,7 +3,7 @@
 namespace Aca\Bundle\ShopBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Aca\Bundle\ShopBundle\Db\Database;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
 {
@@ -13,7 +13,8 @@ class ProductController extends Controller
      */
     public function showAllProductsAction()
     {
-        $db = new Database();
+
+        $db = $this->get('acadb');
 
         $query = "SELECT * FROM aca_product";
         $results = $db->fetchRowMany($query);
@@ -28,13 +29,11 @@ class ProductController extends Controller
 
     public function showProductAction($slug)
     {
+        $db = $this->get('acadb');
 
-        $db = new Database();
+        $query = "SELECT * FROM aca_product WHERE slug = :mySlug";
 
-        $query = "SELECT * FROM aca_product WHERE slug='$slug'";
-        $result = $db->fetchRowMany($query);
-
-        $result = $result[0];
+        $result = $db->fetchRow($query, array('mySlug' => $slug));
 
         return $this->render(
             'AcaShopBundle:Products:product.detail.html.twig',
