@@ -1,0 +1,13 @@
+{% extends '::base.html.twig' %}
+
+{% block content %}
+
+    <h3>{{ product.name }}</h3>
+
+    <p>{{ product.description }}</p>
+
+    <img src="{{ product.image }}"/>
+
+    <h5>{{ product.price }}</h5>
+
+{% endblock %}

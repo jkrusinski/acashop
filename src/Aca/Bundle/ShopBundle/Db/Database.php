@@ -44,4 +44,11 @@ class Database
 
         return $return;
     }
+
+    public function addUser($name, $username, $password)
+    {
+        $add = $this->db->prepare('INSERT INTO aca_user (name, username, password) VALUES (?,?,?)');
+        $add->bind_param('sss', $name, $username, $password);
+        $add->execute();
+    }
 }

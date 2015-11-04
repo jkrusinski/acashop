@@ -1,0 +1,81 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}Product Page{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .description {
+        height: 150px;
+        overflow: hidden;
+    }
+    .frame {
+        width: 100%;
+    }
+    .hero-feature img {
+        height: 150px;
+    }
+    .product-title {
+        line-height: 26px;
+        height: 52px;
+        overflow: hidden;
+        margin: 0 auto 10px auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Jumbotron Header -->
+    <header class="jumbotron hero-spacer">
+        <h1>A Warm Welcome!</h1>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa, ipsam, eligendi, in quo sunt possimus non incidunt odit vero aliquid similique quaerat nam nobis illo aspernatur vitae fugiat numquam repellat.</p>
+        <p><a class="btn btn-primary btn-large">Call to action!</a>
+        </p>
+    </header>
+
+    <hr>
+
+    <!-- Title -->
+    <div class="row">
+        <div class="col-lg-12">
+            <h3>ACA Products</h3>
+        </div>
+    </div>
+    <!-- /.row -->
+
+    <!-- Page Features -->
+    <div class="row text-center">
+
+        {% for item in results %}
+
+            <div class="col-md-3 col-sm-6 hero-feature">
+                <div class="thumbnail">
+                    <div class="thumbnail frame">
+                        <img src="{{ item.image }}" alt="{{ item.name }}" class="img-responsive"/>
+                    </div>
+                    <div class="caption">
+                        <h3 class="product-title">{{ item.name }}</h3>
+                        <p class="description">{{ item.description|slice(0, 199) }}...</p>
+                        <p>
+                            <a href="#" class="btn btn-default disabled">${{ item.price }}</a>
+                            <a href="{{ path('aca_show_product_detail', {'slug': item.slug}) }}" class="btn btn-primary">More Info</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        {% endfor %}
+
+    </div>
+    <!-- /.row -->
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
+        <div class="row">
+            <div class="col-lg-12">
+                <p>Copyright &copy; Your Website 2014</p>
+            </div>
+        </div>
+    </footer>
+{% endblock %}

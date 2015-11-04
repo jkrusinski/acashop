@@ -10,43 +10,16 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class LoginController extends Controller
 {
-    public function loginFormAction(Request $request)
+    public function loginAction(Request $request)
     {
-        $session = $this->getSession();
-
-        $msg = null;
-
-        $username = $request->get('username');
+        $username = strtolower($request->get('username')); // make username case insensitive
         $password = $request->get('password');
 
-
-        if (!empty($username) && !empty($password)) {
-
-            $query = "SELECT * FROM aca_user WHERE username='$username' AND password='$password'";
-
-            $db = new Database();
-            $data = $db->fetchRowMany($query);
-
-            if (empty($data) && $request->getMethod() == 'POST') {
-
-                $msg = 'Please check your credentials.';
-                $session->set('loggedIn', false);
-
-            } else {
-
-                $row = array_pop($data);
-                $name = $row['name'];
-
-                $session->set('loggedIn', true);
-                $session->set('name', $name);
-
-            }
-        }
-
-        $session->save();
+        $session = $this->setUserSession($username, $password, $request);
 
         $loggedIn = $session->get('loggedIn');
         $name = $session->get('name');
+        $msg = $session->get('msg');
 
 
         return $this->render(
@@ -66,9 +39,86 @@ class LoginController extends Controller
         $session = $this->getSession();
         $session->remove('loggedIn');
         $session->remove('name');
+        $session->remove('msg');
         $session->save();
 
         return new RedirectResponse('/login');
+    }
+
+    public function registerAction()
+    {
+        return $this->render(
+            'AcaShopBundle:LoginForm:register.html.twig'
+        );
+
+    }
+
+    public function addAccountAction(Request $request)
+    {
+        // get & set variables
+        $msg = [];
+
+        $name = $request->get('name');
+        $username = strtolower($request->get('username')); // make username case insensitive
+        $password = $request->get('password');
+        $confirmPassword = $request->get('confirm-password');
+
+        // make sure all fields are filled in
+        $formEmpty = empty($name) || empty($username) || empty($password);
+
+        // if form empty, reload register page with alert
+        if($formEmpty) return $this->render(
+            'AcaShopBundle:LoginForm:register.html.twig',
+            array(
+                'formEmpty' => true,
+                'name' => $name,
+                'username' => $username,
+                'password' => $password,
+                'confirmPassword' => $confirmPassword
+            )
+        );
+
+        // validate form information
+        $userCheck = $this->checkUsername($username);
+        $passwordValid = strlen($password) < 8 || !preg_match('/[A-Z]+[a-z]+[0-9]+/', $password);
+
+        if($userCheck) $msg['user'] = 'Username already exists.';
+
+        if($passwordValid) $msg['password'] = true;
+
+        if($password != $confirmPassword) $msg['confirm'] = 'Please make sure passwords match.';
+
+        // send validation message back to register form
+        if(!empty($msg)){
+
+            return $this->render(
+                'AcaShopBundle:LoginForm:register.html.twig',
+                array(
+                    'msg' => $msg,
+                    'name' => $name,
+                    'username' => $username,
+                    'password' => $password,
+                    'confirmPassword' => $confirmPassword
+                )
+            );
+
+        } else { // otherwise create new user
+
+            $db = new Database();
+            $db->addUser($name, $username, $password);
+
+            $session = $this->setUserSession($username, $password, $request);
+
+            return $this->render(
+                'AcaShopBundle:LoginForm:addedUser.html.twig',
+                array(
+                    'name' => $session->get('name'),
+                    'username' => $session->get('username')
+                )
+            );
+
+        }
+
     }
 
     /**
@@ -79,6 +129,64 @@ class LoginController extends Controller
     {
         $session = $this->get('session');
         if (!$session->isStarted()) $session->start();
+
+        return $session;
+    }
+
+    /**
+     * Checks to see if username already exists
+     * @param string $username Desired username
+     * @return bool Returns true if user already exits, false otherwise
+     */
+    private function checkUsername($username)
+    {
+        $query = "SELECT * FROM aca_user WHERE username='$username'";
+
+        $db = new Database();
+        $result = $db->fetchRowMany($query);
+
+        return (bool)$result;
+    }
+
+    /**
+     * Sets the login credentials in the user's session
+     * @param string $username
+     * @param string $password
+     * @return Session Returns the user's session object.
+     */
+    private function setUserSession($username, $password)
+    {
+        $session = $this->getSession();
+
+        $msg = null;
+
+        if (!empty($username) && !empty($password)) {
+
+            $query = "SELECT * FROM aca_user WHERE username='$username' AND password='$password'";
+
+            $db = new Database();
+            $data = $db->fetchRowMany($query);
+
+            if (empty($data)) {
+
+                $msg = 'Please check your credentials.';
+                $session->set('loggedIn', false);
+                $session->set('msg', $msg);
+
+            } else {
+
+                $row = array_pop($data);
+                $name = $row['name'];
+
+                $session->set('loggedIn', true);
+                $session->set('name', $name);
+                $session->set('username', $username);
+                $session->set('msg', null);
+
+            }
+        }
+
+        $session->save();
 
         return $session;
     }

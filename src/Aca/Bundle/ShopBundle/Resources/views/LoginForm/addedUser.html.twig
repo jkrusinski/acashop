@@ -1,0 +1,27 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}User Created{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+
+            <div class="panel panel-default">
+
+                <div class="panel-heading">
+                    <h1 class="panel-title">Account Created</h1>
+                </div>
+
+                <div class="panel-body">
+                    <p class="lead">Your account was created with the following credentials:</p>
+                    <p><strong>Name: </strong>{{ name }}</p>
+                    <p><strong>Username: </strong>{{ username }}</p>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}

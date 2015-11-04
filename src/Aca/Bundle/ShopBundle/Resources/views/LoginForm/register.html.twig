@@ -1,0 +1,133 @@
+{% extends '::base.html.twig' %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+
+            <div class="panel panel-default">
+
+                <div class="panel-heading">
+                    <h1 class="panel-title">Register</h1>
+                </div>
+
+                <div class="panel-body">
+
+                    <form action="{{ path('aca_add_account') }}" method="post">
+
+
+                        {# NAME FIELD #}
+                        <div class="form-group">
+                            <label for="register-name" class="control-label">Name: </label>
+                            <input class="form-control"
+                                   type="text"
+                                   name="name"
+                                   id="register-name"
+                                   {% if name is defined %} value="{{ name }}" {% endif %}>
+                        </div>
+
+
+
+                        {# USERNAME FIELD #}
+                        {% if msg.user is defined %}
+                            <div class="form-group has-error">
+                                <label for="register-username" class="control-label">Username: </label>
+                                <input class="form-control"
+                                       type="text"
+                                       name="username"
+                                       id="register-username"
+                                       {% if username is defined %} value="{{ username }}" {% endif %}>
+                                <span class="help-block">{{ msg.user }}</span>
+                            </div>
+                        {% else %}
+                            <div class="form-group">
+                                <label for="register-username" class="control-label">Username: </label>
+                                <input class="form-control"
+                                       type="text"
+                                       name="username"
+                                       id="register-username"
+                                       {% if username is defined %} value="{{ username }}" {% endif %}>
+                            </div>
+                        {% endif %}
+
+
+
+                        {# PASSWORD FIELD #}
+                        {% if msg.password is defined %}
+                            <div class="form-group has-error">
+                                <label for="register-password" class="control-label">Password: </label>
+                                <input class="form-control"
+                                       type="password"
+                                       name="password"
+                                       id="register-password"
+                                       {% if password is defined %} value="{{ password }}" {% endif %}>
+                                <span class="help-block">
+                                    Password must be at least 8 characters long and contain at least one uppercase
+                                    letter, one lowercase letter, and one number.
+                                </span>
+                            </div>
+                        {% else %}
+                            <div class="form-group">
+                                <label for="register-password" class="control-label">Password: </label>
+                                <input class="form-control"
+                                       type="password"
+                                       name="password"
+                                       id="register-password"
+                                       {% if password is defined %} value="{{ password }}" {% endif %}>
+                                <span class="help-block">
+                                    Password must be at least 8 characters long and contain at least one uppercase
+                                    letter, one lowercase letter, and one number.
+                                </span>
+                            </div>
+                        {% endif %}
+
+
+
+                        {# CONFRIM PASSWORD FIELD #}
+                        {% if msg.confirm is defined %}
+                            <div class="form-group has-error">
+                                <label for="register-confirm-password" class="control-label">Confirm Password: </label>
+                                <input class="form-control"
+                                       type="password"
+                                       name="confirm-password"
+                                       id="register-confirm-password"
+                                       {% if confirmPassword is defined %} value="{{ confirmPassword }}" {% endif %}>
+                                <span class="help-block">{{ msg.confirm }}</span>
+                            </div>
+                        {% else %}
+                            <div class="form-group">
+                                <label for="register-confirm-password" class="control-label">Confirm Password: </label>
+                                <input class="form-control"
+                                       type="password"
+                                       name="confirm-password"
+                                       id="register-confirm-password"
+                                       {% if confirmPassword is defined %} value="{{ confirmPassword }}" {% endif %}>
+                            </div>
+                        {% endif %}
+
+
+
+                        {# SUBMIT BUTTON #}
+                        <input class="btn btn-default pull-right"
+                               type="submit"
+                               name="create-account"
+                               value="Create Account">
+
+                    </form>
+
+                </div>
+
+            </div>
+
+            {% if formEmpty is defined %}
+                <div class="alert alert-danger" role="alert">Please make sure all fields are completed.</div>
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock %}
