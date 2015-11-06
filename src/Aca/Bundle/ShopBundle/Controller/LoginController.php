@@ -15,7 +15,7 @@ class LoginController extends Controller
         $username = strtolower($request->get('username')); // make username case insensitive
         $password = $request->get('password');
 
-        $session = $this->setUserSession($username, $password, $request);
+        $session = $this->setUserSession($username, $password);
 
         $loggedIn = $session->get('loggedIn');
         $name = $session->get('name');
@@ -40,6 +40,7 @@ class LoginController extends Controller
         $session->remove('loggedIn');
         $session->remove('name');
         $session->remove('msg');
+        $session->remove('userID');
         $session->save();
 
         return new RedirectResponse('/login');
@@ -107,7 +108,10 @@ class LoginController extends Controller
             $db = new Database();
             $db->addUser($name, $username, $password);
 
-            $session = $this->setUserSession($username, $password, $request);
+            $cart = $this->get('cart');
+            $cart->getCartID();
+
+            $session = $this->setUserSession($username, $password);
 
             return $this->render(
                 'AcaShopBundle:LoginForm:addedUser.html.twig',
@@ -177,10 +181,12 @@ class LoginController extends Controller
 
                 $row = array_pop($data);
                 $name = $row['name'];
+                $userID = $row['id'];
 
                 $session->set('loggedIn', true);
                 $session->set('name', $name);
                 $session->set('username', $username);
+                $session->set('userID', $userID);
                 $session->set('msg', null);
 
             }

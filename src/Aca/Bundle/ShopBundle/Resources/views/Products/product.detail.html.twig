@@ -10,4 +10,24 @@
 
     <h5>{{ product.price }}</h5>
 
+    <div class="col-sm-3">
+        <form action="{{ path('aca_add_to_cart') }}" method="post">
+
+            <div class="input-group">
+                <input type="text" name="qty" class="form-control" placeholder="Quantity">
+                <span class="input-group-btn">
+                    <input type="submit" name="add-qty" value="Add To Cart" class="btn btn-default">
+                </span>
+            </div>
+
+            <input type="hidden" name="product-id" value="{{ product.id }}">
+
+        </form>
+    </div>
+
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+
 {% endblock %}

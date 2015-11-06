@@ -1,6 +1,12 @@
 services:
+#   aca_shop.example:
+#       class: Aca\Bundle\ShopBundle\Example
+#       argumets: [@service_id, "plain_value", %parameter%]
 
     acadb:
         class: Simplon\Mysql\Mysql
         arguments: [%database_host%, %database_user%, %database_password%, %database_name%]
 
+    cart:
+        class: Aca\Bundle\ShopBundle\Service\CartService
+        arguments: [@acadb, @session]
