@@ -3,7 +3,6 @@
 namespace Aca\Bundle\ShopBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Aca\Bundle\ShopBundle\Db\Database;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -16,6 +15,8 @@ class LoginController extends Controller
         $password = $request->get('password');
 
         $session = $this->setUserSession($username, $password);
+
+        dump($session);
 
         $loggedIn = $session->get('loggedIn');
         $name = $session->get('name');
@@ -190,21 +191,22 @@ class LoginController extends Controller
 
             } else {
 
-                // get cart information
-                $cart = $this->get('cart');
-                $cartID = $cart->getCartID();
-
                 // get user information
                 $name = $data['name'];
                 $userID = $data['id'];
+
+                // get cart information
+                $cart = $this->get('cart');
+                $cartID = $cart->getCartID($userID);
 
                 // enter data into session
                 $session->set('loggedIn', true);
                 $session->set('username', $username);
                 $session->set('userID', $userID);
-                $session->set('name', $name);
                 $session->set('cartID', $cartID);
+                $session->set('name', $name);
                 $session->set('msg', null);
+
 
             }
         }

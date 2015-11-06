@@ -2,6 +2,38 @@
 
 {% block title %}Shopping Cart{% endblock %}
 
+{% block stylesheets %}
+    <style>
+        td, th {
+            padding: 10px;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
     <h3>Shopping Cart</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        {% for item in results %}
+
+            <tr>
+                <td><img src="{{ item.image }}" width="100"></td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.unit_price }}</td>
+            </tr>
+
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
