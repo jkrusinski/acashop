@@ -21,7 +21,6 @@ class LoginController extends Controller
         $name = $session->get('name');
         $msg = $session->get('msg');
 
-
         return $this->render(
             'AcaShopBundle:LoginForm:login.html.twig',
             array(
@@ -55,7 +54,6 @@ class LoginController extends Controller
         return $this->render(
             'AcaShopBundle:LoginForm:register.html.twig'
         );
-
     }
 
     public function addAccountAction(Request $request)
@@ -109,8 +107,15 @@ class LoginController extends Controller
 
         } else { // otherwise create new user
 
-            $db = new Database();
-            $db->addUser($name, $username, $password);
+            $db = $this->get('acadb');
+            $db->insert(
+                'aca_user',
+                array(
+                    'name' => $name,
+                    'username' => $username,
+                    'password' => $password
+                )
+            );
 
             $session = $this->setUserSession($username, $password);
 
@@ -145,10 +150,10 @@ class LoginController extends Controller
      */
     private function checkUsername($username)
     {
-        $query = "SELECT * FROM aca_user WHERE username='$username'";
+        $query = "SELECT * FROM aca_user WHERE username = :username";
 
-        $db = new Database();
-        $result = $db->fetchRowMany($query);
+        $db = $this->get('acadb');
+        $result = $db->fetchRow($query, array('username', $username));
 
         return (bool)$result;
     }
