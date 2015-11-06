@@ -37,10 +37,14 @@ class LoginController extends Controller
     public function logoutAction()
     {
         $session = $this->getSession();
+
         $session->remove('loggedIn');
-        $session->remove('name');
-        $session->remove('msg');
+        $session->remove('username');
         $session->remove('userID');
+        $session->remove('name');
+        $session->remove('cartID');
+        $session->remove('msg');
+
         $session->save();
 
         return new RedirectResponse('/login');
@@ -108,9 +112,6 @@ class LoginController extends Controller
             $db = new Database();
             $db->addUser($name, $username, $password);
 
-            $cart = $this->get('cart');
-            $cart->getCartID();
-
             $session = $this->setUserSession($username, $password);
 
             return $this->render(
@@ -166,27 +167,38 @@ class LoginController extends Controller
 
         if (!empty($username) && !empty($password)) {
 
-            $query = "SELECT * FROM aca_user WHERE username='$username' AND password='$password'";
+            $query = "SELECT * FROM aca_user WHERE username = :username AND password = :password";
 
-            $db = new Database();
-            $data = $db->fetchRowMany($query);
+            $db = $this->get('acadb');
+            $data = $db->fetchRow(
+                $query,
+                array('username' => $username, 'password' => $password)
+            );
 
             if (empty($data)) {
 
+                // set message
                 $msg = 'Please check your credentials.';
+
                 $session->set('loggedIn', false);
                 $session->set('msg', $msg);
 
             } else {
 
-                $row = array_pop($data);
-                $name = $row['name'];
-                $userID = $row['id'];
+                // get cart information
+                $cart = $this->get('cart');
+                $cartID = $cart->getCartID();
 
+                // get user information
+                $name = $data['name'];
+                $userID = $data['id'];
+
+                // enter data into session
                 $session->set('loggedIn', true);
-                $session->set('name', $name);
                 $session->set('username', $username);
                 $session->set('userID', $userID);
+                $session->set('name', $name);
+                $session->set('cartID', $cartID);
                 $session->set('msg', null);
 
             }

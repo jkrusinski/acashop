@@ -39,28 +39,29 @@ class CartService
      */
     public function getCartID()
     {
+        $cartID = null;
+
         // check if cart exists
-        $existQuery = "SELECT * FROM aca_cart WHERE user_id = :userID";
+        $query = "SELECT * FROM aca_cart WHERE user_id = :userID";
         $exist = $this->db->fetchRow(
-            $existQuery,
+            $query,
             array('userID' => $this->session->get('userID'))
         );
 
-        echo '<pre>';
-
         if(!$exist) {
-            $result = $this->db->insert(
+
+            $cartID = $this->db->insert(
                 'aca_cart',
                 array('user_id' => $this->session->get('userID'))
             );
 
-            return $result;
-
         } else {
 
-            return $exist['id'];
+            $cartID = $exist['id'];
 
         }
+
+        return $cartID;
 
     }
 
@@ -72,6 +73,8 @@ class CartService
      */
     public function addProductToCart($productID, $qty)
     {
+
+
 
     }
 
