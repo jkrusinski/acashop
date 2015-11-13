@@ -1,33 +1,79 @@
 {% extends '::base.html.twig' %}
 
+{% block stylesheets %}
+    <style>
+        .img-holder img {
+            display: inline-block;
+        }
+
+        .img-holder {
+            text-align: center;
+        }
+
+        .product-holder {
+            padding: 20px;
+        }
+    </style>
+{% endblock %}
+
+
 {% block content %}
 
-    <h3>{{ product.name }}</h3>
+    <div class="panel panel-warning">
 
-    <p>{{ product.description }}</p>
+        <div class="panel-body product-holder">
 
-    <img src="{{ product.image }}"/>
+            <div class="row">
+                <div class="col-md-6">
 
-    <h5>{{ product.price }}</h5>
+                    <div class="img-holder">
+                        <img src="{{ product.image }}" class="img-responsive thumbnail"/>
+                    </div>
 
-    <div class="col-sm-3">
-        <form action="{{ path('aca_add_to_cart') }}" method="post">
 
-            <div class="input-group">
-                <input type="text" name="qty" class="form-control" placeholder="Quantity">
-                <span class="input-group-btn">
-                    <input type="submit" name="add-qty" value="Add To Cart" class="btn btn-default">
-                </span>
+                </div>
+                <div class="col-md-6">
+
+                    <div class="vertical-parent">
+
+                        <div class="vertical-child">
+
+                            <h3>{{ product.name }}</h3>
+
+                            <p class="lead">{{ product.price }}</p>
+
+                            <p>{{ product.description }}</p>
+
+                            <form action="{{ path('aca_add_to_cart') }}" method="post">
+
+                                <div class="input-group">
+                                    <input type="text" name="qty" class="form-control" placeholder="Quantity">
+                                    <span class="input-group-btn"><input type="submit"
+                                                                         name="add-qty"
+                                                                         value="Add To Cart"
+                                                                         class="btn btn-default"></span>
+                                </div>
+
+                                <input type="hidden" name="product-id" value="{{ product.id }}">
+
+                                <input type="hidden" name="slug" value="{{ product.slug }}">
+
+                            </form>
+
+                            {% if msg %}
+                                <div class="alert alert-danger" role="alert">{{ msg }}</div>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
             </div>
 
-            <input type="hidden" name="product-id" value="{{ product.id }}">
+        </div>
 
-        </form>
     </div>
 
-    <br/>
-    <br/>
-    <br/>
-    <br/>
 
 {% endblock %}

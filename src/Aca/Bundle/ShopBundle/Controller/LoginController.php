@@ -6,21 +6,28 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class LoginController extends Controller
 {
-    public function loginAction(Request $request)
+    /**
+     * Login Page
+     * @param Request $request
+     * @param bool $error
+     * @return Response
+     */
+    public function loginAction(Request $request, $error)
     {
         $username = strtolower($request->get('username')); // make username case insensitive
         $password = $request->get('password');
 
         $session = $this->setUserSession($username, $password);
 
-        dump($session);
-
         $loggedIn = $session->get('loggedIn');
         $name = $session->get('name');
         $msg = $session->get('msg');
+
+        if ($error) $msg = 'Sign in to gain access to your shopping cart.';
 
         return $this->render(
             'AcaShopBundle:LoginForm:login.html.twig',
@@ -34,6 +41,10 @@ class LoginController extends Controller
         );
     }
 
+    /**
+     * Logout the user session.
+     * @return RedirectResponse
+     */
     public function logoutAction()
     {
         $session = $this->getSession();
@@ -50,6 +61,10 @@ class LoginController extends Controller
         return new RedirectResponse('/login');
     }
 
+    /**
+     * Register form.
+     * @return Response
+     */
     public function registerAction()
     {
         return $this->render(
@@ -57,6 +72,12 @@ class LoginController extends Controller
         );
     }
 
+    /**
+     * Adds an account to the database.
+     * @param Request $request
+     * @return Response
+     * @throws \Simplon\Mysql\MysqlException
+     */
     public function addAccountAction(Request $request)
     {
         // get & set variables

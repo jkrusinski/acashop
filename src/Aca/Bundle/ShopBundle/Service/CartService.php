@@ -76,10 +76,10 @@ class CartService
     public function addProductToCart($productID, $qty)
     {
         // fetch product information
-        $query = "SELECT * FROM aca_product WHERE id = :id";
-        $product = $this->db->fetchRow($query, array('id' => $productID));
+        $query = "SELECT price FROM aca_product WHERE id = :id";
+        $result = $this->db->fetchRow($query, array('id' => $productID));
 
-        $productPrice = $product['price'];
+        $productPrice = $result['price'];
         $cartID = $this->session->get('cartID');
 
         // insert into aca_cart_product
@@ -105,12 +105,12 @@ class CartService
         $cartID = $this->session->get('cartID');
 
         $query = "
-            SELECT aca_cart_product.id, aca_cart_product.unit_price, aca_cart_product.quantity,
-                aca_product.id AS product_id, aca_product.name, aca_product.image
-            FROM aca_cart_product
-            INNER JOIN aca_product
-            ON aca_cart_product.product_id = aca_product.id
-            WHERE aca_cart_product.cart_id = :cartID
+            SELECT
+                cp.id, cp.unit_price, cp.quantity, p.id AS product_id, p.name, p.image, p.slug
+            FROM
+                aca_cart_product AS cp
+                INNER JOIN aca_product AS p ON cp.product_id = p.id
+            WHERE cp.cart_id = :cartID
         ";
 
         $result = $this->db->fetchRowMany($query, array('cartID' => $cartID));
@@ -118,14 +118,53 @@ class CartService
         return $result;
     }
 
-    public function removeProductFromCart()
+    /**
+     * Deletes an item from the cart.
+     * @param int $cartProductID
+     * @return bool
+     * @throws \Simplon\Mysql\MysqlException
+     */
+    public function removeProductFromCart($cartProductID)
     {
-
+        return $this->db->delete(
+            'aca_cart_product',
+            array('id' => $cartProductID)
+        );
     }
 
-    public function updateProductQty()
+    /**
+     * Updates the quantity of a product in the cart.
+     * @param int $cartProductID
+     * @param int $newQty
+     * @return bool
+     * @throws \Simplon\Mysql\MysqlException
+     */
+    public function updateProductQty($cartProductID, $newQty)
     {
+        return $this->db->update(
+            'aca_cart_product',
+            array('id' => $cartProductID),
+            array('quantity' => $newQty)
+        );
+    }
 
+    /**
+     * Gets the subtotal of the cart.
+     * @param array $results
+     * @return int
+     */
+    public function getTotal($results = array())
+    {
+        // get $results if it is not passed through
+        if (empty($results)) $results = $this->getAllCartProducts();
+
+        $sum = 0;
+
+        foreach ($results as $item) {
+            $sum += $item['unit_price'] * $item['quantity'];
+        }
+
+        return $sum;
     }
 
 }

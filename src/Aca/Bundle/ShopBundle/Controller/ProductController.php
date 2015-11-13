@@ -8,12 +8,11 @@ use Symfony\Component\HttpFoundation\Response;
 class ProductController extends Controller
 {
     /**
-     * Show all products
+     * Show All Products
      * @return Response
      */
     public function showAllProductsAction()
     {
-
         $db = $this->get('acadb');
 
         $query = "SELECT * FROM aca_product";
@@ -27,7 +26,13 @@ class ProductController extends Controller
         );
     }
 
-    public function showProductAction($slug)
+    /**
+     * Product Detail Page
+     * @param string $slug
+     * @param bool $error
+     * @return Response
+     */
+    public function showProductAction($slug, $error)
     {
         $db = $this->get('acadb');
 
@@ -35,10 +40,14 @@ class ProductController extends Controller
 
         $result = $db->fetchRow($query, array('mySlug' => $slug));
 
+        if($error) $msg = 'Please make sure quantity is an integer.';
+        else $msg = null;
+
         return $this->render(
             'AcaShopBundle:Products:product.detail.html.twig',
             array(
-                'product' => $result
+                'product' => $result,
+                'msg' => $msg
             )
         );
     }

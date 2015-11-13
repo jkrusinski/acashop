@@ -3,8 +3,8 @@ aca_shop_homepage:
     defaults: { _controller: AcaShopBundle:Default:homepage }
 
 aca_login_handler:
-    path: /login
-    defaults: { _controller: AcaShopBundle:Login:login }
+    path: /login/{error}
+    defaults: { _controller: AcaShopBundle:Login:login, error: false }
     methods: [GET, POST]
 
 aca_logout_handler:
@@ -28,8 +28,8 @@ aca_show_products:
     methods: [GET]
 
 aca_show_product_detail:
-    path: /products/detail/{slug}
-    defaults: { _controller: AcaShopBundle:Product:showProduct }
+    path: /products/detail/{slug}/{error}
+    defaults: { _controller: AcaShopBundle:Product:showProduct, error: false }
     methods: [GET]
 
 aca_show_cart:
@@ -37,7 +37,17 @@ aca_show_cart:
     defaults: { _controller: AcaShopBundle:Cart:showCart }
     methods: [GET]
 
+aca_update_qty:
+    path: /cart
+    defaults: { _controller: AcaShopBundle:Cart:updateQty }
+    methods: [POST]
+
 aca_add_to_cart:
     path: /add_to_cart
     defaults: { _controller: AcaShopBundle:Cart:addToCart }
+    methods: [POST]
+
+aca_delete_from_cart:
+    path: /delete_from_cart
+    defaults: { _controller: AcaShopBundle:Cart:deleteFromCart }
     methods: [POST]
